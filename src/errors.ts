@@ -1,11 +1,9 @@
 import { RouteResponse } from './route'
 
-abstract class RespError extends Error {
-  public static defaults: {
-    message: string
-    status: number
-    code: string
-  }
+export abstract class RespError extends Error {
+  public static readonly MESSAGE: string
+  public static readonly STATUS: number
+  public static readonly CODE: string
 
   public readonly status: number
   public readonly code: string
@@ -13,11 +11,11 @@ abstract class RespError extends Error {
   public constructor(message?: string, public readonly originalError?: Error) {
     super(message || (originalError && originalError.message))
 
-    const defaults = (this.constructor as typeof RespError).defaults
+    const constructor = this.constructor as typeof RespError
 
-    this.message = this.message || defaults.message
-    this.status = defaults.status
-    this.code = defaults.code
+    this.message = this.message || constructor.MESSAGE
+    this.status = constructor.STATUS
+    this.code = constructor.CODE
     Error.captureStackTrace(this, this.constructor)
   }
 
@@ -35,35 +33,27 @@ abstract class RespError extends Error {
 }
 
 export class BadRequestError extends RespError {
-  public static defaults = {
-    message: 'Bad Request',
-    status: 400,
-    code: 'bad_request',
-  }
+  public static readonly MESSAGE = 'Bad Request'
+  public static readonly STATUS = 400
+  public static readonly CODE = 'bad_request'
 }
 
 export class UnauthorizedError extends RespError {
-  public static defaults = {
-    message: 'Unauthorized',
-    status: 401,
-    code: 'unauthorized',
-  }
+  public static readonly MESSAGE = 'Unauthorized'
+  public static readonly STATUS = 401
+  public static readonly CODE = 'unauthorized'
 }
 
 export class NotFoundError extends RespError {
-  public static defaults = {
-    message: 'Not Found',
-    status: 404,
-    code: 'not_found',
-  }
+  public static readonly MESSAGE = 'Not Found'
+  public static readonly STATUS = 404
+  public static readonly CODE = 'not_found'
 }
 
 export class ServerError extends RespError {
-  public static defaults = {
-    message: 'Server Error',
-    status: 500,
-    code: 'server',
-  }
+  public static readonly MESSAGE = 'Server Error'
+  public static readonly STATUS = 500
+  public static readonly CODE = 'server'
 }
 
 export const isRespError = (x: any): x is RespError => x instanceof RespError
