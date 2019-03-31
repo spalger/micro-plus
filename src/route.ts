@@ -5,7 +5,7 @@ import { Context } from './context'
 export interface RouteResponse {
   status?: number
   headers?: {
-    [name: string]: string
+    [name: string]: string | undefined
   }
   body?: Readable | Buffer | object | number | string
 }

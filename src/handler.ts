@@ -80,7 +80,9 @@ export function createRootHandler(
     const { status = 200, body, headers = {} } = resp
 
     for (const [key, value] of Object.entries(headers)) {
-      response.setHeader(key, value)
+      if (value !== undefined) {
+        response.setHeader(key, value)
+      }
     }
 
     send(response, status, body)

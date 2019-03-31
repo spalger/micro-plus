@@ -1,7 +1,8 @@
 import { IncomingMessage } from 'http'
 import { URL } from 'url'
 
-import { isStr } from './is_type'
+import { isStr, isArr } from './is_type'
+import { BadRequestError } from './errors'
 
 function getBaseUrl(request: IncomingMessage) {
   const protocol = request.headers['x-forwarded-proto']
@@ -50,7 +51,13 @@ export class Context {
   }
 
   public header(name: string) {
-    return this.request.headers[name.toLowerCase()]
+    const value = this.request.headers[name.toLowerCase()]
+    if (isArr(value)) {
+      throw new BadRequestError(
+        `invalid [${name}] header, multi-value headers not allowed`,
+      )
+    }
+    return value
   }
 
   public redirect(newUrl: URL) {

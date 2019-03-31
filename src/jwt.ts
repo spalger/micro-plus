@@ -24,7 +24,7 @@ export function verify(token: string, secret: string) {
 export function assertValidJwt(ctx: Context, secret: string) {
   const header = ctx.header('authorization')
   if (!isStr(header)) {
-    throw new BadRequestError('a single authroization header must be specified')
+    throw new BadRequestError('missing authroization header')
   }
 
   const [type, ...tokenBits] = header.split(' ')
