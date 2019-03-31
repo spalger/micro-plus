@@ -71,22 +71,22 @@ interface ReqContext {
    * absolute baseUrl for the request, based on the x-forwarded-proto and x-forwarded-host headers
    */
   readonly baseUrl: string
-  
+
   /**
    * absolute url for the request, based on the baseUrl
    */
   readonly url: string
-  
+
   /**
    * pathname parsed from this.url
    */
   readonly pathname: string
-  
+
   /**
    * readonly query string values from this.url
    */
   readonly query: Readonly<Record<string, string | ReadonlyArray<string> | undefined>>
-  
+
   /**
    * http method of the request
    */
@@ -101,6 +101,11 @@ interface ReqContext {
    * create a temporary redirect response
    */
   redirect(newUrl: URL): RouteResponse
+
+  /**
+   * read the request body and parse it as JSON
+   */
+  readBodyAsJson(): unknown
 }
 ```
 
