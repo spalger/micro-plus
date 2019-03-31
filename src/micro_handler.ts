@@ -21,7 +21,7 @@ interface Options {
   onRequest?: (ctx: Context) => MaybePromise<RouteResponse | void>
 }
 
-export function createRootHandler(options: Options) {
+export function createMicroHandler(options: Options) {
   async function routeReq(req: Context) {
     if (options.onRequest) {
       const resp = await options.onRequest(req)
