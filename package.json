@@ -1,8 +1,11 @@
 {
   "name": "@spalger/micro-plus",
   "version": "0.0.1",
-  "main": "index.js",
+  "main": "lib/index.js",
   "license": "MIT",
+  "scripts": {
+    "build": "rm -rf lib && tsc"
+  },
   "devDependencies": {
     "@types/jsonwebtoken": "^8.3.2",
     "@types/micro": "^7.3.3",
