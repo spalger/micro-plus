@@ -41,3 +41,25 @@ export function parseIntSearchParam(query: ReqContext['query'], name: string) {
 
   return parseFloat(raw)
 }
+
+export function parseOptionSearchParam(
+  query: ReqContext['query'],
+  name: string,
+  options: string[],
+) {
+  if (!query.hasOwnProperty(name)) {
+    return undefined
+  }
+
+  const raw = query[name]
+
+  if (!isStr(raw)) {
+    throw new SearchParamError(name, 'expected a single value')
+  }
+
+  if (options.includes(raw)) {
+    throw new SearchParamError(name, `expected one of "${options.join('","')}"`)
+  }
+
+  return raw
+}
