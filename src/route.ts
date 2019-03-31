@@ -7,7 +7,7 @@ export interface RouteResponse {
   headers?: {
     [name: string]: string
   }
-  body?: Readable | Buffer | object | string
+  body?: Readable | Buffer | object | number | string
 }
 
 export class Route {
