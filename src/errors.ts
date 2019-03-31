@@ -1,26 +1,32 @@
 import { RouteResponse } from './route'
 
-export class ServerError extends Error {
-  public statusCode = 500
-  public code = 'unknown'
-  public static defaultMessage = 'Server Error'
+abstract class RespError extends Error {
+  public static defaults: {
+    message: string
+    status: number
+    code: string
+  }
+
+  public readonly status: number
+  public readonly code: string
 
   public constructor(message?: string, public readonly originalError?: Error) {
     super(message || (originalError && originalError.message))
 
-    if (!this.message) {
-      this.message = (this.constructor as typeof ServerError).defaultMessage
-    }
+    const defaults = (this.constructor as typeof RespError).defaults
 
+    this.message = this.message || defaults.message
+    this.status = defaults.status
+    this.code = defaults.code
     Error.captureStackTrace(this, this.constructor)
   }
 
   public toResponse(): RouteResponse {
     return {
-      status: this.statusCode,
+      status: this.status,
       body: {
         // eslint-disable-next-line @typescript-eslint/camelcase
-        status_code: this.statusCode,
+        status_code: this.status,
         code: this.code,
         message: this.message,
       },
@@ -28,35 +34,39 @@ export class ServerError extends Error {
   }
 }
 
-export class NotFoundError extends ServerError {
-  public static defaultMessage = 'Not Found'
-  public statusCode = 404
-  public code = 'not_found'
+export class BadRequestError extends RespError {
+  public static defaults = {
+    message: 'Bad Request',
+    status: 400,
+    code: 'bad_request',
+  }
 }
 
-export class UnauthorizedError extends ServerError {
-  public static defaultMessage = 'Unauthorized'
-  public statusCode = 401
-  public code = 'unauthorized'
+export class UnauthorizedError extends RespError {
+  public static defaults = {
+    message: 'Unauthorized',
+    status: 401,
+    code: 'unauthorized',
+  }
 }
 
-export class BadRequestError extends ServerError {
-  public static defaultMessage = 'Bad Request'
-  public statusCode = 400
-  public code = 'bad_request'
+export class NotFoundError extends RespError {
+  public static defaults = {
+    message: 'Not Found',
+    status: 404,
+    code: 'not_found',
+  }
 }
 
-export type RespError =
-  | ServerError
-  | NotFoundError
-  | UnauthorizedError
-  | BadRequestError
+export class ServerError extends RespError {
+  public static defaults = {
+    message: 'Server Error',
+    status: 500,
+    code: 'server',
+  }
+}
 
-export const isRespError = (x: any): x is RespError =>
-  x instanceof ServerError ||
-  x instanceof NotFoundError ||
-  x instanceof UnauthorizedError ||
-  x instanceof BadRequestError
+export const isRespError = (x: any): x is RespError => x instanceof RespError
 
 export const toRespError = (error: Error) =>
-  exports.isRespError(error) ? error : new ServerError(error.message, error)
+  isRespError(error) ? error : new ServerError(error.message, error)
