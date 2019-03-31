@@ -1,9 +1,9 @@
-import { Context } from './context'
+import { ReqContext } from './req_context'
 import { BadRequestError } from './errors'
 import { isStr } from './is_type'
 import { RouteResponse } from './route'
 
-const parseCslHeader = (ctx: Context, name: string) => {
+const parseCslHeader = (ctx: ReqContext, name: string) => {
   const header = ctx.header(name)
 
   if (!isStr(header)) {
@@ -17,7 +17,7 @@ const parseCslHeader = (ctx: Context, name: string) => {
 }
 
 export function handleCorsRequest(
-  ctx: Context,
+  ctx: ReqContext,
   validOrigins: string[],
 ): RouteResponse {
   const origin = ctx.header('origin')

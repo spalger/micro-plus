@@ -1,6 +1,6 @@
 import { Readable } from 'stream'
 
-import { Context } from './context'
+import { ReqContext } from './req_context'
 
 export interface RouteResponse {
   status?: number
@@ -18,20 +18,20 @@ export class Route {
     private readonly method: string,
     private readonly path: string,
     private readonly handler: (
-      ctx: Context,
+      ctx: ReqContext,
     ) => Promise<RouteResponse> | RouteResponse,
   ) {
     this.path = trimTrailingSlash(this.path)
   }
 
-  public match(ctx: Context) {
+  public match(ctx: ReqContext) {
     return (
       ctx.method === this.method &&
       this.path === trimTrailingSlash(ctx.pathname)
     )
   }
 
-  public async exec(ctx: Context) {
+  public async exec(ctx: ReqContext) {
     return await this.handler(ctx)
   }
 }

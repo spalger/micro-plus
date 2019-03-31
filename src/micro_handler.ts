@@ -4,7 +4,7 @@ import { send } from 'micro'
 import { handleCorsRequest } from './cors'
 import { NotFoundError, isRespError, ServerError } from './errors'
 import { Route, RouteResponse } from './route'
-import { Context } from './context'
+import { ReqContext } from './req_context'
 import { isObj, isStr, isFn, MaybePromise } from './is_type'
 
 interface Options {
@@ -18,11 +18,11 @@ interface Options {
   /**
    * global request handler, if a response is returned it takes over the request
    */
-  onRequest?: (ctx: Context) => MaybePromise<RouteResponse | void>
+  onRequest?: (ctx: ReqContext) => MaybePromise<RouteResponse | void>
 }
 
 export function createMicroHandler(options: Options) {
-  async function routeReq(req: Context) {
+  async function routeReq(req: ReqContext) {
     if (options.onRequest) {
       const resp = await options.onRequest(req)
       if (resp) {
@@ -55,7 +55,7 @@ export function createMicroHandler(options: Options) {
     let resp
 
     try {
-      ctx = Context.parse(request)
+      ctx = ReqContext.parse(request)
       resp = await routeReq(ctx)
     } catch (error) {
       resp = (isRespError(error)

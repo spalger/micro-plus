@@ -1,7 +1,7 @@
 import * as jsonwebtoken from 'jsonwebtoken'
 import { BadRequestError } from './errors'
 import { isStr } from './is_type'
-import { Context } from './context'
+import { ReqContext } from './req_context'
 
 export const SECOND = 1000
 export const MINUTE = 60 * SECOND
@@ -21,7 +21,7 @@ export function verify(token: string, secret: string) {
   })
 }
 
-export function assertValidJwt(ctx: Context, secret: string) {
+export function assertValidJwt(ctx: ReqContext, secret: string) {
   const header = ctx.header('authorization')
   if (!isStr(header)) {
     throw new BadRequestError('missing authroization header')

@@ -1,7 +1,10 @@
 import { BadRequestError } from './errors'
-import { Context } from './context'
+import { ReqContext } from './req_context'
 
-export function parseBooleanSearchParam(query: Context['query'], name: string) {
+export function parseBooleanSearchParam(
+  query: ReqContext['query'],
+  name: string,
+) {
   if (!query.hasOwnProperty(name)) {
     return false
   }

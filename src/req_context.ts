@@ -18,7 +18,7 @@ function getBaseUrl(request: IncomingMessage) {
   return new URL(`${protocol}://${host}`).href
 }
 
-export class Context {
+export class ReqContext {
   public readonly pathname: string
   public readonly query: Readonly<{
     [name: string]: string | ReadonlyArray<string> | undefined
@@ -47,7 +47,7 @@ export class Context {
     const baseUrl = getBaseUrl(request)
     const url = new URL(request.url || '/', baseUrl).href
     const method = (request.method || 'GET').toUpperCase()
-    return new Context(baseUrl, url, method, request)
+    return new ReqContext(baseUrl, url, method, request)
   }
 
   public header(name: string) {
