@@ -8,10 +8,7 @@ export class SearchParamError extends BadRequestError {
   }
 }
 
-export function parseBooleanSearchParam(
-  query: ReqContext['query'],
-  name: string,
-) {
+export function parseBoolSearchParam(query: ReqContext['query'], name: string) {
   if (!query.hasOwnProperty(name)) {
     return false
   }
@@ -33,11 +30,14 @@ export function parseIntSearchParam(query: ReqContext['query'], name: string) {
   }
 
   const raw = query[name]
-  const value = isStr(raw) && parseFloat(raw)
 
-  if (!Number.isInteger(value as any)) {
+  if (!isStr(raw)) {
+    throw new SearchParamError(name, 'expected a single value')
+  }
+
+  if (!/^\d+$/.test(raw)) {
     throw new SearchParamError(name, 'expected an integer')
   }
 
-  return value
+  return parseFloat(raw)
 }
