@@ -9,19 +9,28 @@ export const HOUR = 60 * MINUTE
 export const DAY = 24 * HOUR
 export const JWT_ALGORITHM = 'HS256'
 
-export function sign(payload: object, secret: string) {
+export function makeJwt({
+  payload,
+  expiresIn,
+  secret,
+}: {
+  payload: object
+  expiresIn: number
+  secret: string
+}) {
   return jsonwebtoken.sign({ ...payload }, secret, {
     algorithm: JWT_ALGORITHM,
+    expiresIn,
   })
 }
 
-export function verify(token: string, secret: string) {
+export function parseJwt(token: string, secret: string) {
   return jsonwebtoken.verify(token, secret, {
     algorithms: [JWT_ALGORITHM],
   })
 }
 
-export function assertValidJwt(ctx: ReqContext, secret: string) {
+export function assertValidJwtAuthrorization(ctx: ReqContext, secret: string) {
   const header = ctx.header('authorization')
   if (!isStr(header)) {
     throw new BadRequestError('missing authroization header')
@@ -33,7 +42,7 @@ export function assertValidJwt(ctx: ReqContext, secret: string) {
   }
 
   try {
-    verify(tokenBits.join(' '), secret)
+    parseJwt(tokenBits.join(' '), secret)
   } catch (error) {
     throw new BadRequestError(`invalid jwt: ${error.message}`)
   }
