@@ -149,6 +149,7 @@ Error objects will be automatically transformed into HTTP responses in the forma
 ```
 
 Error classes:
+
 | name | status | code | default message |
 | --- | --- | --- | --- |
 | `BadRequestError` | 400 | 'bad_request' | 'Bad Request' |
