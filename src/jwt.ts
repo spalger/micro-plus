@@ -9,6 +9,8 @@ export const HOUR = 60 * MINUTE
 export const DAY = 24 * HOUR
 export const JWT_ALGORITHM = 'HS256'
 
+const jwtPayloadCache = new WeakMap<ReqContext, object>()
+
 export function makeJwt({
   payload,
   expiresIn,
@@ -27,7 +29,7 @@ export function makeJwt({
 export function parseJwt(token: string, secret: string) {
   return jsonwebtoken.verify(token, secret, {
     algorithms: [JWT_ALGORITHM],
-  })
+  }) as object
 }
 
 export function assertValidJwtAuthrorization(ctx: ReqContext, secret: string) {
@@ -42,8 +44,19 @@ export function assertValidJwtAuthrorization(ctx: ReqContext, secret: string) {
   }
 
   try {
-    parseJwt(tokenBits.join(' '), secret)
+    jwtPayloadCache.set(ctx, parseJwt(tokenBits.join(' '), secret))
   } catch (error) {
     throw new BadRequestError(`invalid jwt: ${error.message}`)
   }
+}
+
+export function getJwtPayload(cxt: ReqContext) {
+  if (!jwtPayloadCache.has(cxt)) {
+    throw new Error(
+      'assertValidJwtAuthrorization() was not called with this ReqContext object',
+    )
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  return jwtPayloadCache.get(cxt)!
 }
