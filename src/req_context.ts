@@ -1,6 +1,8 @@
 import { IncomingMessage } from 'http'
 import { URL } from 'url'
 
+import { json } from 'micro'
+
 import { isStr, isArr } from './is_type'
 import { BadRequestError } from './errors'
 
@@ -58,6 +60,10 @@ export class ReqContext {
       )
     }
     return value
+  }
+
+  public async readBodyAsJson() {
+    return (await json(this.request)) as unknown
   }
 
   public redirect(newUrl: URL) {
