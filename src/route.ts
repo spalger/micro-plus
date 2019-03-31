@@ -20,7 +20,7 @@ export class Route {
   ) {}
 
   public match(ctx: Context) {
-    return ctx.method === this.method && ctx.url.pathname === this.path
+    return ctx.method === this.method && ctx.pathname === this.path
   }
 
   public async exec(ctx: Context) {

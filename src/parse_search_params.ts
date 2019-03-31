@@ -1,12 +1,12 @@
-import { URLSearchParams } from 'url'
 import { BadRequestError } from './errors'
+import { Context } from './context'
 
-export function parseBooleanSearchParam(params: URLSearchParams, name: string) {
-  if (!params.has(name)) {
+export function parseBooleanSearchParam(query: Context['query'], name: string) {
+  if (!query.hasOwnProperty(name)) {
     return false
   }
 
-  const param = params.get(name)
+  const param = query[name]
   if (param === 'false') {
     return false
   }

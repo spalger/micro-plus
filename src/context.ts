@@ -14,20 +14,37 @@ function getBaseUrl(request: IncomingMessage) {
     throw new Error('x-forwarded-host header missing')
   }
 
-  return new URL(`${protocol}://${host}`)
+  return new URL(`${protocol}://${host}`).href
 }
 
 export class Context {
+  public readonly pathname: string
+  public readonly query: Readonly<{
+    [name: string]: string | ReadonlyArray<string> | undefined
+  }>
+
   public constructor(
-    public readonly baseUrl: URL,
-    public readonly url: URL,
+    public readonly baseUrl: string,
+    public readonly url: string,
     public readonly method: string,
     public readonly request: IncomingMessage,
-  ) {}
+  ) {
+    const parsedUrl = new URL(this.url)
+    this.pathname = parsedUrl.pathname
+
+    const query: Record<string, string | string[]> = {}
+    for (const [name, value] of parsedUrl.searchParams.entries()) {
+      query[name] = value
+      if (typeof value !== 'string') {
+        Object.freeze(query[name])
+      }
+    }
+    this.query = Object.freeze(query)
+  }
 
   public static parse(request: IncomingMessage) {
     const baseUrl = getBaseUrl(request)
-    const url = new URL(request.url || '/', baseUrl)
+    const url = new URL(request.url || '/', baseUrl).href
     const method = (request.method || 'GET').toUpperCase()
     return new Context(baseUrl, url, method, request)
   }
