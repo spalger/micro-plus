@@ -11,34 +11,42 @@ export function createRootHandler(
   routes: Route[],
   globalHandler: (ctx: Context) => MaybePromise<RouteResponse | void>,
 ) {
-  async function handleRequest(request: IncomingMessage) {
-    let req
+  async function routeReq(req: Context) {
+    if (globalHandler) {
+      const resp = await globalHandler(req)
+      if (resp) {
+        return resp
+      }
+    }
+
+    if (
+      req.method === 'OPTIONS' &&
+      req.header('Access-Control-Request-Method')
+    ) {
+      return await handleCorsRequest(req)
+    }
+
+    for (const route of routes) {
+      if (route.match(req)) {
+        return await route.exec(req)
+      }
+    }
+
+    throw new NotFoundError()
+  }
+
+  async function handleRequest(
+    request: IncomingMessage,
+    response: ServerResponse,
+  ) {
+    let ctx
+    let resp
+
     try {
-      req = Context.parse(request)
-
-      if (globalHandler) {
-        const resp = await globalHandler(req)
-        if (resp) {
-          return resp
-        }
-      }
-
-      if (
-        req.method === 'OPTIONS' &&
-        req.header('Access-Control-Request-Method')
-      ) {
-        return await handleCorsRequest(req)
-      }
-
-      for (const route of routes) {
-        if (route.match(req)) {
-          return await route.exec(req)
-        }
-      }
-
-      throw new NotFoundError()
+      ctx = Context.parse(request)
+      resp = await routeReq(ctx)
     } catch (error) {
-      const resp = (isRespError(error)
+      resp = (isRespError(error)
         ? error
         : new ServerError(error.message, error)
       ).toResponse()
@@ -61,24 +69,27 @@ export function createRootHandler(
         // tslint:disable-next-line no-console
         console.error(
           'RESPONSE ERROR:\n' +
-            `  url: ${req ? req.url.href : request.url}\n` +
+            `  url: ${ctx ? ctx.url : request.url}\n` +
             `  status: ${resp.status}\n` +
             `  headers: ${stringHeaders}\n` +
             `  body: ${stringRespBody}`,
         )
       }
-
-      return resp
     }
-  }
 
-  return async (request: IncomingMessage, response: ServerResponse) => {
-    const { status = 200, body, headers = {} } = await handleRequest(request)
+    const { status = 200, body, headers = {} } = resp
 
     for (const [key, value] of Object.entries(headers)) {
       response.setHeader(key, value)
     }
 
     send(response, status, body)
+  }
+
+  return (request: IncomingMessage, response: ServerResponse) => {
+    handleRequest(request, response).catch(error => {
+      console.error(`UNHANDLED ERROR: ${error.stack || error.message}`)
+      process.exit(1)
+    })
   }
 }
