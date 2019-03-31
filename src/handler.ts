@@ -7,26 +7,38 @@ import { Route, RouteResponse } from './route'
 import { Context } from './context'
 import { isObj, isStr, isFn, MaybePromise } from './is_type'
 
-export function createRootHandler(
-  routes: Route[],
-  globalHandler: (ctx: Context) => MaybePromise<RouteResponse | void>,
-) {
+interface Options {
+  routes: Route[]
+
+  /**
+   * array of valid origin values for cors preflight requests
+   */
+  corsAllowOrigins?: string[]
+
+  /**
+   * global request handler, if a response is returned it takes over the request
+   */
+  onRequest?: (ctx: Context) => MaybePromise<RouteResponse | void>
+}
+
+export function createRootHandler(options: Options) {
   async function routeReq(req: Context) {
-    if (globalHandler) {
-      const resp = await globalHandler(req)
+    if (options.onRequest) {
+      const resp = await options.onRequest(req)
       if (resp) {
         return resp
       }
     }
 
     if (
+      options.corsAllowOrigins &&
       req.method === 'OPTIONS' &&
       req.header('Access-Control-Request-Method')
     ) {
-      return await handleCorsRequest(req)
+      return await handleCorsRequest(req, options.corsAllowOrigins)
     }
 
-    for (const route of routes) {
+    for (const route of options.routes) {
       if (route.match(req)) {
         return await route.exec(req)
       }

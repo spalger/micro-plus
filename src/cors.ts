@@ -16,9 +16,12 @@ const parseCslHeader = (ctx: Context, name: string) => {
     .filter(Boolean)
 }
 
-export function handleCorsRequest(ctx: Context): RouteResponse {
+export function handleCorsRequest(
+  ctx: Context,
+  validOrigins: string[],
+): RouteResponse {
   const origin = ctx.header('origin')
-  if (origin !== 'https://tests.kibana.dev') {
+  if (!validOrigins.some(x => x === origin)) {
     return {
       status: 200,
     }
