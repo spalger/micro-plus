@@ -5,7 +5,9 @@ import { handleCorsRequest } from './cors'
 import { NotFoundError, isRespError, ServerError } from './errors'
 import { Route, RouteResponse } from './route'
 import { ReqContext } from './req_context'
-import { isObj, isStr, isFn, MaybePromise } from './is_type'
+import { isObj, isStr, isFn } from './is_type'
+
+type MaybePromise<T> = Promise<T> | T
 
 interface Options {
   routes: Route[]

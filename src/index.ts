@@ -1,5 +1,4 @@
 export * from './errors'
-export * from './is_type'
 export * from './jwt'
 export * from './route'
 export * from './parse_search_params'
