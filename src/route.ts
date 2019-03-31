@@ -10,6 +10,9 @@ export interface RouteResponse {
   body?: Readable | Buffer | object | number | string
 }
 
+const trimTrailingSlash = (path: string) =>
+  path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path
+
 export class Route {
   public constructor(
     private readonly method: string,
@@ -17,10 +20,15 @@ export class Route {
     private readonly handler: (
       ctx: Context,
     ) => Promise<RouteResponse> | RouteResponse,
-  ) {}
+  ) {
+    this.path = trimTrailingSlash(this.path)
+  }
 
   public match(ctx: Context) {
-    return ctx.method === this.method && ctx.pathname === this.path
+    return (
+      ctx.method === this.method &&
+      this.path === trimTrailingSlash(ctx.pathname)
+    )
   }
 
   public async exec(ctx: Context) {
