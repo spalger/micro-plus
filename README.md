@@ -22,6 +22,11 @@ interface Options {
    * Array of exact origin header values that will authorize cors pre-flight requests
    */
   corsAllowOrigins?: string[]
+
+  /**
+   * APM agent to be used, see `./src/apm_agent.ts`
+   */
+  apmAgent?: ApmAgent
 }
 
 function createMicroHandler(options: Options): (req: IncomingMessage, res: ServerResponse) => void

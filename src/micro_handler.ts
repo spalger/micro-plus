@@ -6,6 +6,7 @@ import { NotFoundError, isRespError, ServerError } from './errors'
 import { Route, RouteResponse } from './route'
 import { ReqContext } from './req_context'
 import { isObj, isStr, isFn } from './is_type'
+import { ApmAgent } from './apm_agent'
 
 type MaybePromise<T> = Promise<T> | T
 
@@ -21,9 +22,16 @@ interface Options {
    * global request handler, if a response is returned it takes over the request
    */
   onRequest?: (ctx: ReqContext) => MaybePromise<RouteResponse | void>
+
+  /**
+   * APM agent to be used
+   */
+  apmAgent?: ApmAgent
 }
 
 export function createMicroHandler(options: Options) {
+  const apm = options.apmAgent
+
   async function routeReq(req: ReqContext) {
     if (options.onRequest) {
       const resp = await options.onRequest(req)
@@ -53,13 +61,27 @@ export function createMicroHandler(options: Options) {
     request: IncomingMessage,
     response: ServerResponse,
   ) {
+    if (apm) {
+      apm.onRequest(request, response)
+    }
+
     let ctx
     let resp
 
     try {
       ctx = ReqContext.parse(request)
+      if (apm) {
+        apm.onRequestParsed(ctx, request, response)
+      }
       resp = await routeReq(ctx)
+      if (apm) {
+        apm.onResponse(resp, ctx, request, response)
+      }
     } catch (error) {
+      if (apm) {
+        apm.onError(error, ctx, request, response)
+      }
+
       resp = (isRespError(error)
         ? error
         : new ServerError(error.message, error)
@@ -97,6 +119,10 @@ export function createMicroHandler(options: Options) {
       if (value !== undefined) {
         response.setHeader(key, value)
       }
+    }
+
+    if (apm) {
+      apm.beforeSend(request, response, status, body)
     }
 
     send(response, status, body)
