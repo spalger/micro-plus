@@ -63,7 +63,7 @@ export class ReqContext {
   }
 
   public async readBodyAsText() {
-    return (await text(this.request)) as unknown
+    return await text(this.request)
   }
 
   public async readBodyAsJson() {
