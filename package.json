@@ -4,6 +4,7 @@
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
+    "prepack": "yarn run build",
     "build": "rm -rf lib && tsc"
   },
   "devDependencies": {
