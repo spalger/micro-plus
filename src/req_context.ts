@@ -1,7 +1,7 @@
 import { IncomingMessage } from 'http'
 import { URL } from 'url'
 
-import { json } from 'micro'
+import { json, text } from 'micro'
 
 import { isStr, isArr } from './is_type'
 import { BadRequestError } from './errors'
@@ -60,6 +60,10 @@ export class ReqContext {
       )
     }
     return value
+  }
+
+  public async readBodyAsText() {
+    return (await text(this.request)) as unknown
   }
 
   public async readBodyAsJson() {
