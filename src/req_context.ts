@@ -62,12 +62,18 @@ export class ReqContext {
     return value
   }
 
-  public async readBodyAsText() {
-    return await text(this.request)
+  public async readBodyAsText(options?: {
+    limit?: string | number
+    encoding?: string
+  }) {
+    return await text(this.request, options)
   }
 
-  public async readBodyAsJson() {
-    return (await json(this.request)) as unknown
+  public async readBodyAsJson(options?: {
+    limit?: string | number
+    encoding?: string
+  }) {
+    return (await json(this.request, options)) as unknown
   }
 
   public redirect(newUrl: URL) {
