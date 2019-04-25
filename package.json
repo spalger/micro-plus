@@ -20,6 +20,7 @@
     "typescript": "3.3"
   },
   "dependencies": {
+    "is-stream": "^2.0.0",
     "jsonwebtoken": "^8.5.1",
     "micro": "^9.3.3"
   }

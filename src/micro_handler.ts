@@ -94,7 +94,13 @@ export function createMicroHandler(options: Options) {
         )
 
         let stringRespBody: string
-        if (isObj(resp.body) && 'on' in resp.body && isFn(resp.body.on)) {
+        if (isFn(resp.body)) {
+          stringRespBody = '<dynamic>'
+        } else if (
+          isObj(resp.body) &&
+          'on' in resp.body &&
+          isFn(resp.body.on)
+        ) {
           stringRespBody = '<stream>'
         } else if (isObj(resp.body) || isStr(resp.body)) {
           stringRespBody = JSON.stringify(resp.body)
@@ -102,7 +108,6 @@ export function createMicroHandler(options: Options) {
           stringRespBody = '<unknown>'
         }
 
-        // tslint:disable-next-line no-console
         console.error(
           'RESPONSE ERROR:\n' +
             `  url: ${ctx ? ctx.url : request.url}\n` +
@@ -125,7 +130,12 @@ export function createMicroHandler(options: Options) {
       apm.beforeSend(request, response, status, body)
     }
 
-    send(response, status, body)
+    if (typeof body === 'function') {
+      response.statusCode = status
+      body(response)
+    } else {
+      send(response, status, body)
+    }
   }
 
   return (request: IncomingMessage, response: ServerResponse) => {

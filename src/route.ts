@@ -1,4 +1,5 @@
 import { Readable } from 'stream'
+import { ServerResponse } from 'http'
 
 import { ReqContext } from './req_context'
 
@@ -7,7 +8,13 @@ export interface RouteResponse {
   headers?: {
     [name: string]: string | undefined
   }
-  body?: Readable | Buffer | object | number | string
+  body?:
+    | Readable
+    | Buffer
+    | object
+    | number
+    | string
+    | ((response: ServerResponse) => void | Promise<void>)
 }
 
 const trimTrailingSlash = (path: string) =>
