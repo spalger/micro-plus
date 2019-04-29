@@ -3,6 +3,10 @@ import { ServerResponse } from 'http'
 
 import { ReqContext } from './req_context'
 
+export type RouteHandler = (
+  ctx: ReqContext,
+) => Promise<RouteResponse> | RouteResponse
+
 export interface RouteResponse {
   status?: number
   headers?: {
@@ -24,9 +28,7 @@ export class Route {
   public constructor(
     private readonly method: string,
     private readonly path: string,
-    private readonly handler: (
-      ctx: ReqContext,
-    ) => Promise<RouteResponse> | RouteResponse,
+    private readonly handler: RouteHandler,
   ) {
     this.path = trimTrailingSlash(this.path)
   }
