@@ -5,7 +5,9 @@
   "license": "MIT",
   "scripts": {
     "prepack": "yarn run build",
-    "build": "rm -rf lib && tsc"
+    "build": "rm -rf lib && tsc",
+    "type_check": "tsc --noEmit",
+    "test": "yarn run type_check"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^8.3.2",
