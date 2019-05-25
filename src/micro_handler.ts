@@ -126,12 +126,13 @@ export function createMicroHandler(options: Options) {
       }
     }
 
+    response.statusCode = status
+
     if (apm) {
       apm.beforeSend(request, response, status, body)
     }
 
     if (typeof body === 'function') {
-      response.statusCode = status
       body(response)
     } else {
       send(response, status, body)
