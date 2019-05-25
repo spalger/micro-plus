@@ -24,9 +24,9 @@ interface Options {
   corsAllowOrigins?: string[]
 
   /**
-   * APM agent to be used, see `./src/apm_agent.ts`
+   * Object with methods that will be called while a request is processed, see `./src/hooks.ts`
    */
-  apmAgent?: ApmAgent
+  hooks?: Hooks
 }
 
 function createMicroHandler(options: Options): (req: IncomingMessage, res: ServerResponse) => void
