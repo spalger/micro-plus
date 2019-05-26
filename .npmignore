@@ -3,5 +3,9 @@
 /.eslintrc.js
 /.gitignore
 /.prettierrc
+/.circleci
+/.editorconfig
+/jest.config.js
 /tsconfig.json
+/yarn-error.log
 /.vscode
