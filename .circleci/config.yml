@@ -23,7 +23,7 @@ jobs:
 
       - run: yarn type_check
       - run: yarn lint
-      - run: yarn test
+      - run: yarn jest
 
       - store_test_results:
           path: test-results
