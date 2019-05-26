@@ -12,4 +12,12 @@ module.exports = {
     '@typescript-eslint/no-parameter-properties': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
   },
+  overrides: [
+    {
+      files: ['**/*.js'],
+      rules: {
+        '@typescript-eslint/no-var-requires': 'off',
+      },
+    },
+  ],
 }

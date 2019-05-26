@@ -7,6 +7,7 @@
     "prepack": "yarn run build",
     "build": "rm -rf lib && tsc",
     "type_check": "tsc --noEmit",
+    "lint": "eslint . --ext .ts,.js",
     "test": "jest"
   },
   "devDependencies": {
