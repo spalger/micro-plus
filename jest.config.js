@@ -5,6 +5,9 @@ module.exports = {
   rootDir: 'src',
   testEnvironment: 'node',
   testMatch: ['**/*.test.ts'],
+  transform: {
+    '\\.ts$': 'ts-jest',
+  },
   reporters: [
     'default',
     process.env.CI && [
