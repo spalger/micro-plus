@@ -1,6 +1,6 @@
 {
   "name": "@spalger/micro-plus",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
