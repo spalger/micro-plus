@@ -24,7 +24,7 @@ function getBaseUrl(request: IncomingMessage) {
 export class ReqContext {
   public readonly pathname: string
   public readonly query: Readonly<{
-    [name: string]: string | ReadonlyArray<string> | undefined
+    [name: string]: string | readonly string[] | undefined
   }>
 
   public constructor(
