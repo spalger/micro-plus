@@ -5,25 +5,35 @@
   "license": "MIT",
   "scripts": {
     "prepack": "yarn run build",
-    "build": "rm -rf lib && tsc",
+    "build": "babel src -d lib --delete-dir-on-start -x .ts --source-maps true --ignore '**/*.test.ts'",
     "type_check": "tsc --noEmit",
-    "test": "yarn run type_check"
+    "test": "jest"
   },
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/jest": "^24.0.13",
     "@types/jsonwebtoken": "^8.3.2",
     "@types/micro": "^7.3.3",
     "@types/node": "8",
     "@typescript-eslint/eslint-plugin": "^1.5.0",
     "@typescript-eslint/parser": "^1.5.0",
+    "babel-jest": "^24.8.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-prettier": "^3.0.1",
+    "jest": "^24.8.0",
+    "jest-junit": "^6.4.0",
     "prettier": "^1.16.4",
     "typescript": "3.3"
   },
   "dependencies": {
     "is-stream": "^2.0.0",
     "jsonwebtoken": "^8.5.1",
-    "micro": "^9.3.3"
+    "micro": "^9.3.3",
+    "read-only-stream": "^2.0.0"
   }
 }

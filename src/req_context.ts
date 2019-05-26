@@ -1,10 +1,11 @@
-import { IncomingMessage } from 'http'
+import { IncomingMessage, IncomingHttpHeaders } from 'http'
 import { URL } from 'url'
 
 import { json, text } from 'micro'
 
 import { isStr, isArr } from './is_type'
 import { BadRequestError } from './errors'
+import { makeReadOnlyStream } from './read_only_stream'
 
 function getBaseUrl(request: IncomingMessage) {
   const protocol = request.headers['x-forwarded-proto']
@@ -30,7 +31,8 @@ export class ReqContext {
     public readonly baseUrl: string,
     public readonly url: string,
     public readonly method: string,
-    public readonly request: IncomingMessage,
+    private readonly headers: IncomingHttpHeaders,
+    private readonly requestForBodyOnly: IncomingMessage,
   ) {
     const parsedUrl = new URL(this.url)
     this.pathname = parsedUrl.pathname
@@ -49,11 +51,11 @@ export class ReqContext {
     const baseUrl = getBaseUrl(request)
     const url = new URL(request.url || '/', baseUrl).href
     const method = (request.method || 'GET').toUpperCase()
-    return new ReqContext(baseUrl, url, method, request)
+    return new ReqContext(baseUrl, url, method, request.headers, request)
   }
 
   public header(name: string) {
-    const value = this.request.headers[name.toLowerCase()]
+    const value = this.headers[name.toLowerCase()]
     if (isArr(value)) {
       throw new BadRequestError(
         `invalid [${name}] header, multi-value headers not allowed`,
@@ -62,26 +64,15 @@ export class ReqContext {
     return value
   }
 
-  public async readBodyAsText(options?: {
-    limit?: string | number
-    encoding?: string
-  }) {
-    return await text(this.request, options)
+  public async readBodyAsText() {
+    return await text(this.requestForBodyOnly)
   }
 
-  public async readBodyAsJson(options?: {
-    limit?: string | number
-    encoding?: string
-  }) {
-    return (await json(this.request, options)) as unknown
+  public async readBodyAsJson() {
+    return (await json(this.requestForBodyOnly)) as unknown
   }
 
-  public redirect(newUrl: URL) {
-    return {
-      status: 302,
-      headers: {
-        Location: newUrl.href,
-      },
-    }
+  public readBodyAsStream() {
+    return makeReadOnlyStream(this.requestForBodyOnly)
   }
 }
