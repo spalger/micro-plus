@@ -103,14 +103,19 @@ interface ReqContext {
   header(name: string): string | string[] | undefined
 
   /**
-   * create a temporary redirect response
-   */
-  redirect(newUrl: URL): RouteResponse
-
-  /**
    * read the request body and parse it as JSON
    */
   readBodyAsJson(): unknown
+
+  /**
+   * read the request body as a string
+   */
+  readBodyAsText(): string
+
+  /**
+   * get a readable stream of the request body content
+   */
+  readBodyAsStream(): Readable
 }
 ```
 
