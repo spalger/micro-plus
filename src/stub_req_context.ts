@@ -1,10 +1,7 @@
 import { IncomingHttpHeaders } from 'http'
 import { Readable } from 'stream'
-import { URL } from 'url'
 
 import { ReqContext } from './req_context'
-
-const BASE_URL = 'http://localhost:8000'
 
 export class StubReqContext extends ReqContext {
   private readonly stubBody: string
@@ -17,7 +14,6 @@ export class StubReqContext extends ReqContext {
       stubBody?: string
     } = {},
   ) {
-    const url = new URL(path, BASE_URL).href
     const method = (options.method || 'GET').toUpperCase()
     const headers = Object.entries(options.headers || {})
       .map(entry => {
@@ -26,7 +22,7 @@ export class StubReqContext extends ReqContext {
       })
       .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 
-    super(BASE_URL, url, method, headers, undefined as any)
+    super(path, method, headers, undefined as any)
 
     this.stubBody = options.stubBody || ''
   }

@@ -73,16 +73,6 @@ Interface:
 ```ts
 interface ReqContext {
   /**
-   * absolute baseUrl for the request, based on the x-forwarded-proto and x-forwarded-host headers
-   */
-  readonly baseUrl: string
-
-  /**
-   * absolute url for the request, based on the baseUrl
-   */
-  readonly url: string
-
-  /**
    * pathname parsed from this.url
    */
   readonly pathname: string

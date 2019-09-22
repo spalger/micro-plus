@@ -102,7 +102,7 @@ export function createMicroHandler(options: Options) {
 
         console.error(
           'RESPONSE ERROR:\n' +
-            `  url: ${ctx ? ctx.url : request.url}\n` +
+            `  url: ${ctx ? ctx.getUrl() : request.url}\n` +
             `  status: ${resp.status}\n` +
             `  headers: ${stringHeaders}\n` +
             `  body: ${stringRespBody}`,

@@ -1,25 +1,11 @@
 import { IncomingMessage, IncomingHttpHeaders } from 'http'
-import { URL } from 'url'
+import * as Url from 'url'
 
 import { json, text } from 'micro'
 
-import { isStr, isArr } from './is_type'
+import { isArr } from './is_type'
 import { BadRequestError } from './errors'
 import { makeReadOnlyStream } from './read_only_stream'
-
-function getBaseUrl(request: IncomingMessage) {
-  const protocol = request.headers['x-forwarded-proto']
-  if (!isStr(protocol)) {
-    throw new Error('x-forwarded-proto header missing')
-  }
-
-  const host = request.headers['x-forwarded-host']
-  if (!isStr(host)) {
-    throw new Error('x-forwarded-host header missing')
-  }
-
-  return new URL(`${protocol}://${host}`).href
-}
 
 export class ReqContext {
   public readonly pathname: string
@@ -28,19 +14,18 @@ export class ReqContext {
   }>
 
   public constructor(
-    public readonly baseUrl: string,
-    public readonly url: string,
+    path: string,
     public readonly method: string,
     private readonly headers: IncomingHttpHeaders,
     private readonly requestForBodyOnly: IncomingMessage,
   ) {
-    const parsedUrl = new URL(this.url)
-    this.pathname = parsedUrl.pathname
+    const parsedPath = Url.parse(path, true)
+    this.pathname = parsedPath.pathname || '/'
 
-    const query: Record<string, string | string[]> = {}
-    for (const [name, value] of parsedUrl.searchParams.entries()) {
+    const query: Record<string, string | string[] | undefined> = {}
+    for (const [name, value] of Object.entries(parsedPath.query || {})) {
       query[name] = value
-      if (typeof value !== 'string') {
+      if (typeof value === 'object') {
         Object.freeze(query[name])
       }
     }
@@ -48,10 +33,12 @@ export class ReqContext {
   }
 
   public static parse(request: IncomingMessage) {
-    const baseUrl = getBaseUrl(request)
-    const url = new URL(request.url || '/', baseUrl).href
-    const method = (request.method || 'GET').toUpperCase()
-    return new ReqContext(baseUrl, url, method, request.headers, request)
+    return new ReqContext(
+      request.url || '/',
+      (request.method || 'GET').toUpperCase(),
+      request.headers,
+      request,
+    )
   }
 
   public header(name: string) {
@@ -74,5 +61,12 @@ export class ReqContext {
 
   public readBodyAsStream() {
     return makeReadOnlyStream(this.requestForBodyOnly)
+  }
+
+  public getUrl() {
+    return Url.format({
+      pathname: this.pathname,
+      query: this.query,
+    })
   }
 }
