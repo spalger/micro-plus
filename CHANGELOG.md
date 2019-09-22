@@ -1,5 +1,10 @@
 # changelog
 
+## 0.4
+
+- added repo/author info
+- extract [next.js](https://nextjs.org) helper to [@spalger/next-plus](https://github.com/spalger/next-plus)
+
 ## 0.3.1
 
 - Expose request headers at `ctx.headers`
