@@ -10,6 +10,9 @@
     "lint": "eslint . --ext .ts,.js",
     "test": "yarn run type_check && yarn run lint && jest"
   },
+  "files": [
+    "lib"
+  ],
   "devDependencies": {
     "@hapi/shot": "^4.1.2",
     "@types/hapi__shot": "^4.1.0",
