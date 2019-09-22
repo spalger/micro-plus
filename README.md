@@ -67,6 +67,69 @@ new Route(
 
 Defines a function that will be called when requests with a matching method + path are received. The handler function recives a [`ReqContext`](#reqcontext) object and must return a [`RouteResponse`](#routeresponse), or a promise for a [`RouteResponse`](#routeresponse). Paths are matched exactly, but a single trailing slash will be stripped from both route and request paths before matching. Paths can't contain variables, use query string params instead.
 
+
+### `createNextHandler`
+
+Create a next.js handler, which is just a microhandler that takes `NextRoute` objects instead. `NextRoute` objects are just `Route` objects that don't specify their route, since next.js routes are just micro routes with their path defined by the file-system instead.
+
+Signature:
+```ts
+interface Options {
+  routes: NextRoute[],
+
+  /**
+   * global request handler that can return a response to take over requests
+   */
+  onRequest?: (ctx: ReqContext) => Promise<RouteResponse | void> | RouteResponse | void,
+
+  /**
+   * Array of exact origin header values that will authorize cors pre-flight requests
+   */
+  corsAllowOrigins?: string[]
+
+  /**
+   * Object with methods that will be called while a request is processed, see `./src/hooks.ts`
+   */
+  hooks?: Hooks
+}
+
+function createNextHandler(options: Options | NextRoute[]): (req: IncomingMessage, res: ServerResponse) => void
+```
+
+Example:
+```js
+import { createNextHandler, assertValidJwtAuthrorization, getConfigVar } from '@spalger/micro-plus'
+
+module.exports = createNextHandler({
+  onRequest(ctx) {
+    assertValidJwtAuthrorization(ctx, getConfigVar('JWT_SECRET'))
+  },
+
+  routes: [
+    new NextRoute('GET', (ctx) => ({
+      status: 200,
+      body: 'bar'
+    }))
+  ],
+})
+```
+
+
+### `NextRoute`
+
+Signature:
+```ts
+new NextRoute(
+  // valid request method for this route
+  method: string,
+  // function to execute when requests are received
+  handler: (ctx: ReqContext) => Promise<RouteResponse> | RouteResponse,
+)
+```
+
+Simplified version of `Route` for use with [next.js dynamic routing](https://nextjs.org/docs#dynamic-routing).
+
+
 ### `ReqContext`
 
 Interface:
