@@ -1,5 +1,9 @@
 # changelog
 
+## 0.3.1
+
+- Expose request headers at `ctx.headers`
+
 ## 0.3.0
 
 - Trim trailing slashes from `ctx.pathname` if it's found

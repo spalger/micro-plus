@@ -12,11 +12,14 @@ export class ReqContext {
   public readonly query: Readonly<{
     [name: string]: string | readonly string[] | undefined
   }>
+  public readonly headers: Readonly<{
+    [name: string]: string | string[] | undefined
+  }>
 
   public constructor(
     path: string,
     public readonly method: string,
-    private readonly headers: IncomingHttpHeaders,
+    sourceHeaders: IncomingHttpHeaders,
     private readonly requestForBodyOnly: IncomingMessage,
   ) {
     // assign method
@@ -41,6 +44,16 @@ export class ReqContext {
       }
     }
     this.query = Object.freeze(query)
+
+    // create readonly headers object
+    const headers: Record<string, string | string[] | undefined> = {}
+    for (const [key, value] of Object.entries(sourceHeaders)) {
+      headers[key] = value
+      if (Array.isArray(headers[key])) {
+        Object.freeze(headers[key])
+      }
+    }
+    this.headers = Object.freeze(headers)
   }
 
   public static parse(request: IncomingMessage) {
