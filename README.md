@@ -29,7 +29,7 @@ interface Options {
   hooks?: Hooks
 }
 
-function createMicroHandler(options: Options): (req: IncomingMessage, res: ServerResponse) => void
+function createMicroHandler(options: Options | Route[]): (req: IncomingMessage, res: ServerResponse) => void
 ```
 
 Example:

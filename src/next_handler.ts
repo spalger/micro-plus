@@ -5,6 +5,8 @@ interface CreateNextHandlerOptions extends CreateMicroHandlerOptions {
   routes: NextRoute[]
 }
 
-export function makeNextHandler(options: CreateNextHandlerOptions) {
-  return createMicroHandler(options)
+export function makeNextHandler(
+  optionsOrRoutes: CreateNextHandlerOptions | NextRoute[],
+) {
+  return createMicroHandler(optionsOrRoutes)
 }

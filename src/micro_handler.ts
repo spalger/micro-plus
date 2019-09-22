@@ -29,7 +29,13 @@ export interface CreateMicroHandlerOptions {
   hooks?: Hooks
 }
 
-export function createMicroHandler(options: CreateMicroHandlerOptions) {
+export function createMicroHandler(
+  optionsOrRoutes: CreateMicroHandlerOptions | Route[],
+) {
+  const options = Array.isArray(optionsOrRoutes)
+    ? { routes: optionsOrRoutes }
+    : optionsOrRoutes
+
   const hooks = new ParsedHooks(options.hooks)
 
   async function routeReq(req: ReqContext) {
