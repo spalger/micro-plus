@@ -222,14 +222,14 @@ Get the parsed JWT payload from a request context that was previously validated 
 
 Specialized verison of `BadRequestError()` that formats errors in search param validation. Reuse to throw consistently formatted validation errors.
 
-### `parseBoolSearchParam(query: ReqContext['query'], name: string)`
+### `getBoolQueryValue(query: ReqContext['query'], name: string)`
 
-Parse the query param `name` as a boolean, defaults to `false`, throws if value is not `true` or `false`.
+Parse the query param `name` as a boolean, defaults to `false`, returns `true` if query param is present but has no value, throws if value is not `true`, `1`, `false` or `0`.
 
-### `parseIntSearchParam(query: ReqContext['query'], name: string)`
+### `getIntQueryValue(query: ReqContext['query'], name: string, defaultValue: number | undefined)`
 
-Parse the query param `name` as an integer, defaults to `undefined`, throws if value is not a simple integer.
+Parse the query param `name` as an integer, defaults to `undefined`, throws if value does not match `^\d+$`.
 
-### `parseOptionSearchParam(query: ReqContext['query'], name: string, options: string[])`
+### `getEnumQueryValue(query: ReqContext['query'], name: string, options: string[], defaultValue: string | undefined)`
 
-Parse the query param `name` as one of the supplied options, defaults to `undefined`, throws if value is not in the list of options.
+Parse the query param `name` as one of the supplied options, returns `undefined` or `defaultValue` if query param is not preset, throws if value is not in the list of options.
