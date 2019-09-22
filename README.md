@@ -136,12 +136,13 @@ Interface:
 ```ts
 interface ReqContext {
   /**
-   * pathname parsed from this.url
+   * pathname of the request, starts with a /, trailing slashes are trimmed off,
+   * does not include the query string
    */
   readonly pathname: string
 
   /**
-   * readonly query string values from this.url
+   * parsed query string of the request
    */
   readonly query: Readonly<Record<string, string | ReadonlyArray<string> | undefined>>
 

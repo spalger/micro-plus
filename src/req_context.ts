@@ -19,9 +19,20 @@ export class ReqContext {
     private readonly headers: IncomingHttpHeaders,
     private readonly requestForBodyOnly: IncomingMessage,
   ) {
+    // assign method
+    this.method = this.method.toUpperCase()
+
+    // assign pathname
     const parsedPath = Url.parse(path, true)
     this.pathname = parsedPath.pathname || '/'
+    while (this.pathname !== '/' && this.pathname.endsWith('/')) {
+      this.pathname = this.pathname.slice(0, this.pathname.length - 1)
+    }
+    if (!this.pathname.startsWith('/')) {
+      this.pathname = `/${this.pathname}`
+    }
 
+    // assign query
     const query: Record<string, string | string[] | undefined> = {}
     for (const [name, value] of Object.entries(parsedPath.query || {})) {
       query[name] = value
@@ -35,7 +46,7 @@ export class ReqContext {
   public static parse(request: IncomingMessage) {
     return new ReqContext(
       request.url || '/',
-      (request.method || 'GET').toUpperCase(),
+      request.method || 'GET',
       request.headers,
       request,
     )

@@ -1,5 +1,9 @@
 # changelog
 
+## 0.3.0
+
+- Trim trailing slashes from `ctx.pathname` if it's found
+
 ## 0.2.1
 
 - Add [next.js](https://nextjs.org) handler/routing support
