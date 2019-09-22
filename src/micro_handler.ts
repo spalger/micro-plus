@@ -10,7 +10,7 @@ import { Hooks, ParsedHooks } from './hooks'
 
 type MaybePromise<T> = Promise<T> | T
 
-interface Options {
+export interface CreateMicroHandlerOptions {
   routes: Route[]
 
   /**
@@ -29,7 +29,7 @@ interface Options {
   hooks?: Hooks
 }
 
-export function createMicroHandler(options: Options) {
+export function createMicroHandler(options: CreateMicroHandlerOptions) {
   const hooks = new ParsedHooks(options.hooks)
 
   async function routeReq(req: ReqContext) {

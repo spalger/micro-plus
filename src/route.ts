@@ -26,7 +26,7 @@ const trimTrailingSlash = (path: string) =>
 
 export class Route {
   public constructor(
-    private readonly method: string,
+    protected readonly method: string,
     private readonly path: string,
     private readonly handler: RouteHandler,
   ) {

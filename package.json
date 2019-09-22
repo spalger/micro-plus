@@ -11,6 +11,8 @@
     "test": "yarn run type_check && yarn run lint && jest"
   },
   "devDependencies": {
+    "@hapi/shot": "^4.1.2",
+    "@types/hapi__shot": "^4.1.0",
     "@types/jest": "^24.0.13",
     "@types/jsonwebtoken": "^8.3.2",
     "@types/micro": "^7.3.3",

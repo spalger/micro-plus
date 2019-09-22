@@ -1,5 +1,9 @@
 # changelog
 
+## 0.2.1
+
+- Add [next.js](https://nextjs.org) handler/routing support
+
 ## 0.2.0
 
 - Use query naming instead of "search param" naming
