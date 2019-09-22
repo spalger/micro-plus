@@ -7,7 +7,7 @@ export class StubReqContext extends ReqContext {
   private readonly stubBody: string
 
   public constructor(
-    path: string = '/',
+    path = '/',
     options: {
       method?: string
       headers?: IncomingHttpHeaders
